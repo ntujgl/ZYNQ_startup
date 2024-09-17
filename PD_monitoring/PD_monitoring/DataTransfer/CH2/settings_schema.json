@@ -1,0 +1,203 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://spdigital.sg/schemas/pd/0.5.0/settings_schema.json",
+    "title": "Settings Schema",
+    "description": "JSON Schema for settings.json",
+    "type": "object",
+    "required": [ "substation-id", 
+        "switchgear-id", 
+        "panel-id", 
+        "sensor-id", 
+        "sensor-type" ],
+    "properties": {
+        "substation-id": {
+            "type": "string",
+            "title": "Substation ID",
+            "readOnly": true
+        },
+        "switchgear-id": {
+            "type": "string",
+            "title": "Switchgear ID",
+            "readOnly": true
+        },
+        "panel-id": {
+            "type": "string",
+            "title": "Panel ID",
+            "readOnly": true
+        },
+        "sensor-id": {
+            "type": "string",
+            "title": "Sensor ID",
+            "readOnly": true
+        },
+        "sensor-type": {
+            "type": "string",
+            "title": "Sensor Type"
+        },
+        "bandwidth-saving": {
+            "type": "boolean",
+            "title": "Bandwidth Saving",
+            "default": false
+        },
+        "pdtypes-for-alarm": {
+            "type": "array",
+            "title": "PD Types for Alarm (Ctrl-click to Select/De-select multiple types)",
+            "items": {
+              "type": "string",
+              "enum": [
+                "Corona",
+                "Surface",
+                "Internal",
+                "Noise"
+              ]
+            },
+            "uniqueItems": true
+        },
+        "resample-level": {
+            "type": "number",
+            "title": "Resample Level",
+            "default": 25
+        },
+        "alternate-mode": {
+            "type": "boolean",
+            "title": "Alternate Mode",
+            "default": false
+        },
+        "max-daq-d": {
+            "type": "number",
+            "title": "Maximum duration per EM pulse capture"
+        },
+        "sampling-rate-mhz": {
+            "type": "number",
+            "title": "Sampling Rate",
+            "minimum": 50,
+            "maximum": 300,
+            "default": 250
+        },
+        "min-no-of-pulses": {
+            "type": "integer",
+            "title": "Minimum number of pulses",
+            "minimum": 1000,
+            "maximum": 5000,
+            "default": 1000
+        },
+        "samples-per-waveform": {
+            "type": "integer",
+            "title": "Samples per Waveform",
+            "default": 256,
+            "enum": [256, 512, 1024, 2048]
+        },
+        "cluster-method": {
+            "type": "string",
+            "title": "Clustering method",
+            "default": "kmeans"
+        },
+        "no-of-cluster": {
+            "type": "integer",
+            "title": "Number of clusters",
+            "default": 0
+        },
+        "cluster-threshold": {
+            "type": "number",
+            "title": "Clustering threshold",
+            "default": 0.2
+        },
+        "waveform-per-cluster": {
+            "type": "integer",
+            "title": "Maximum number of waveform per cluster"
+        },
+        "gain-mode": {
+            "type": "string",
+            "title": "Gain mode",
+            "default": "Auto-Gain-mode-1",
+            "enum": ["Auto-Gain-mode-1", "Auto-Gain-mode-2", "Fixed-Gain" ]
+        },
+        "auto-gain-high-threshold": {
+            "type": "integer",
+            "title": "Auto-Gain High Threshold",
+            "default": 15
+        },
+        "auto-gain-low-threshold": {
+            "type": "integer",
+            "title": "Auto-Gain Low Threshold",
+            "default": 6
+        },
+        "auto-gain-sample-time": {
+            "type": "integer",
+            "title": "Auto-Gain Sample Time",
+            "default": 500
+        },
+        "daq-gain": {
+            "type": "integer",
+            "title": "DAQ Gain"
+        },
+        "trigger-mode": {
+            "type": "string",
+            "title": "Detection Mode",
+            "default": "Auto-Trigger-mode-1",
+            "enum": ["Auto-Trigger-mode-1", "Auto-Trigger-mode-2", "Fixed-Trigger" ]
+        },
+        "auto-trigger-high-threshold": {
+            "type": "integer",
+            "title": "Auto-Trigger High Threshold",
+            "default": 50
+        },
+        "auto-trigger-low-threshold": {
+            "type": "integer",
+            "title": "Auto-Trigger Low Threshold",
+            "default": 25
+        },
+        "auto-trigger-sample-time": {
+            "type": "integer",
+            "title": "Auto-Trigger Sample Time",
+            "default": 500
+        },
+        "daq-triggering-threshold": {
+            "type": "number",
+            "title": "DAQ Triggering Threshold",
+            "default": 15
+        },
+        "trigger-magnitude": {
+            "type": "number",
+            "title": "DAQ Trigger Magnitude(amplitude)",
+            "default": 7.5
+        },
+        "feature-length": {
+            "type": "integer",
+            "title": "Feature Length",
+            "default": 32
+        },
+        "prpd-row": {
+            "type": "integer",
+            "title": "PRPD Rows",
+            "default": 32
+        },
+        "prpd-col": {
+            "type": "integer",
+            "title": "PRPD Columns",
+            "default": 64
+        },
+        "lna": {
+            "type": "boolean",
+            "title": "LNA",
+            "default": true
+        },
+        "calibration-factor": {
+            "type": "number",
+            "title": "DAQ Calibration factor",
+            "default": 1.68
+        },
+        "oem": {
+            "type": "string",
+            "title": "OEM"
+        },
+        "model": {
+            "type": "string",
+            "title": "Model"
+        },
+        "manufactured-date": {
+            "type": "string",
+            "title": "Manufactured Date"
+        }
+    }
+}

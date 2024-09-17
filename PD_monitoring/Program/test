@@ -1,0 +1,7 @@
+NOP = 2000
+Register Type: DAQ_CTRL, Register Value: 0x02000004
+Register Type: DAQ_TRIG, Register Value: 0x00400320
+Register Type: DAQ_NOP, Register Value: 0x000007D0
+Register Type: DAQ_HC, Register Value: 0x00000002
+DMA initialized successfully
+Progress: 0%Progress: 0%Progress: 1%Progress: 2%Progress: 3%Progress: 4%Progress: 5%Progress: 6%Progress: 7%Progress: 8%Progress: 9%Progress: 10%Progress: 11%Progress: 12%Progress: 13%Progress: 14%Progress: 15%

@@ -1,0 +1,173 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://spdigital.sg/schemas/pd/0.1.1/meta_schema.json",
+    "title": "Meta Schema",
+    "description": "JSON Schema for meta.json",
+    "type": "object",
+    "required": [ "substation-id", 
+        "switchgear-id", 
+        "panel-id", 
+        "sensor-id", 
+        "daq-triggering-threshold", 
+        "sampling-rate-mhz", 
+        "no-of-waveforms-collected", 
+        "waveform-collection-time-in-seconds", 
+        "samples-per-waveform", 
+        "alarm" ],
+    "properties": {
+        "client-id": {
+            "type": "string",
+            "title": "Client ID"
+        },
+        "substation-id": {
+            "type": "string",
+            "title": "Substation ID"
+        },
+        "switchgear-id": {
+            "type": "string",
+            "title": "Switchgear ID"
+        },
+        "panel-id": {
+            "type": "string",
+            "title": "Panel ID"
+        },
+        "sensor-id": {
+            "type": "string",
+            "title": "Sensor ID"
+        },
+        "sensor-type": {
+            "type": "string",
+            "title": "Sensor Type"
+        },
+        "datetime": {
+            "type": "string",
+            "title": "Datetime of Upload"
+        },
+        "prpd": {
+            "type": "string",
+            "title": "PRPD file"
+        },
+        "waveform": {
+            "type": "string",
+            "title": "Waveform file"
+        },
+        "daq-triggering-threshold": {
+            "type": "number",
+            "title": "DAQ Triggering Threshold",
+            "default": 100
+        },
+        "sampling-rate-mhz": {
+            "type": "number",
+            "title": "Sampling Rate Mhz"
+        },
+        "no-of-waveforms-collected": {
+            "type": "integer",
+            "title": "No. of Waveforms Collected"
+        },
+        "waveform-collection-time-in-seconds": {
+            "type": "number",
+            "title": "Waveform Collection Time in Seconds"
+        },
+        "samples-per-waveform": {
+            "type": "integer",
+            "title": "Samples per Waveform",
+            "maximum": 2048,
+            "default": 256
+        },
+        "sync-hz": {
+            "type": "number",
+            "title": "Sync Hz"
+        },
+        "acoustic-audible": {
+            "type": "string",
+            "title": "Audible Acoustic file"
+        },
+        "acoustic-raw": {
+            "type": "string",
+            "title": "Raw Acoustic file"
+        },
+        "alarm": {
+            "type": "string",
+            "title": "Sensor Alarm"
+        },
+        "alarm-probability": {
+            "type": "number",
+            "title": "Alarm Probability"
+        },
+        "pd-type": {
+            "type": "string",
+            "title": "PD Type"
+        },
+        "pd-type-probability": {
+            "type": "number",
+            "title": "PD Type Probability"
+        },
+        "frontend-watchdog-alarm": {
+            "type": "boolean",
+            "title": "Frontend Watchdog Alarm"
+        },
+        "frontend-watchdog-alarm-code": {
+            "type": "integer",
+            "title": "Frontend Watchdog Alarm Code"
+        },
+        "frontend-watchdog-alarm-desc": {
+            "type": "string",
+            "title": "Frontend Watchdog Description of the Alarm Code"
+        },
+        "pd-alarm-em": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/alarm-detail" }
+        },
+        "pd-alarm-ae": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/alarm-detail" }
+        },
+        "additional-files": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+        },
+        "repetition-rate": {
+            "type": "number",
+            "title": "Repetition Rate"
+        },
+        "qmax": {
+            "type": "number",
+            "title": "QMax"
+        },
+        "daq-gain-level": {
+            "type": "integer",
+            "title": "DAQ Gain Level",
+            "default": 0
+        },
+        "daq-gain": {
+            "type": "number",
+            "title": "DAQ Gain",
+            "default": 6
+        },
+        "daq-triggering-threshold-used": {
+            "type": "integer",
+            "title": "DAQ Triggering Threshold Used",
+            "default": 15
+        },
+        "bandwidth-saving": {
+            "type": "boolean",
+            "title": "Bandwidth Saving"
+        }
+    },
+    "$defs": {
+        "alarm-detail": {
+            "type": "object",
+            "properties": {
+                "alarm": {
+                    "type": "string"
+                },
+                "corr-coeff": {
+                    "type": "number"
+                }
+            },
+            "required": [ "alarm", "corr-coeff" ]
+        }
+    }
+}
