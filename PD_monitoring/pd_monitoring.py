@@ -4,6 +4,7 @@ import json
 import configparser
 import time
 import shutil
+import process_rawdata
 main_path = None
 
 def get_main_path():
@@ -32,6 +33,24 @@ def run_downloadsettings(panel_id):
     # Optionally, change back to the original directory
     os.chdir(main_path)
 
+def run_uploaddata(panel_id):
+    # Construct the path to the panel directory
+    target_directory = os.path.join(main_path, 'DataTransfer', f'CH{panel_id}')
+
+    # Construct the path to the executable in the DataTransfer directory
+    executable_path = os.path.join(main_path, 'DataTransfer', 'goblobarm32_1204')
+
+    # Change to the target directory
+    os.chdir(target_directory)
+
+    # Execute the command using the absolute path of the executable
+    command = f'{executable_path} -uploaddata'
+    subprocess.run(command, shell=True)
+
+    # Optionally, change back to the original directory
+    os.chdir(main_path)
+
+
 def run_settingschanged(panel_id):
     """
     Execute the goblobarm32_1204 -settingschanged command and determine the return value.
@@ -59,8 +78,9 @@ def run_settingschanged(panel_id):
     elif output == "false":
         return False
     else:
-        return None
         print("ERROR! error message:", output)
+        return None
+        
 
     # Optionally, change back to the original directory
     
@@ -208,6 +228,57 @@ def read_channelinfo_json():
     
     return channelinfo_data
 
+
+def process_raw_data(panel_id, rawdata_filename='rawdata.txt', converted_filename='converted_pddata.txt', 
+                     waveform_filename='waveform.csv', prpd_filename='prpd.csv'):
+
+    # Construct the path to the panel's data directory
+    data_directory = os.path.join(main_path, 'DataTransfer', f'CH{panel_id}')
+    
+    # Construct the full paths to input and output files
+    input_file = os.path.join(data_directory, rawdata_filename)
+    converted_file = os.path.join(data_directory, converted_filename)
+    output_waveform_file= os.path.join(data_directory, waveform_filename)
+    output_prpd = os.path.join(data_directory, prpd_filename)
+
+    # Call the functions from process_rawdata.py
+    print(f"Processing raw data for panel {panel_id} in {data_directory}")
+    process_rawdata.convert_file(input_file, converted_file)
+    print(f"Converted file saved to {converted_file}")
+    
+    waveform_data=process_rawdata.process_file(converted_file, output_waveform_file,0.025,0)
+    print(f"Waveform data saved to {output_waveform_file}")
+    
+    prpd_data=process_rawdata.process_phase_period(converted_file, output_prpd,0.025,0)
+    print(f"PRPD data saved to {output_prpd}")
+    return waveform_data, prpd_data
+
+def update_meta(settings_dict,meta_file, waveform_data):
+
+    # 计算 waveform_data 的行数
+    num_waveforms = waveform_data.shape[0]  # 行数
+    waveform_len = waveform_data.shape[1]
+    trigger_thre=settings_dict.get("daq-triggering-threshold")
+    trig_val=trigger_thre/1000
+    trig_val=trig_val*0.025
+    # 读取 meta.json 文件
+    if not os.path.exists(meta_file):
+        print(f"Error: {meta_file} does not exist.")
+        return
+
+    with open(meta_file, 'r') as file:
+        meta_data = json.load(file)
+
+    # 更新 no-of-waveforms-collected 字段
+    meta_data['no-of-waveforms-collected'] = num_waveforms
+    meta_data['samples-per-waveform'] = waveform_len
+    meta_data["daq-triggering-threshold"]=trig_val
+    meta_data['substation-id'] = "TESTSTATION-5"
+    # 将更新后的数据保存回 meta.json 文件
+    with open(meta_file, 'w') as file:
+        json.dump(meta_data, file, indent=4)
+
+
 def data_acquisition(channelinfo_dict):
     """
     Perform data acquisition for each panel in the channelinfo_dict.
@@ -274,22 +345,37 @@ def data_acquisition(channelinfo_dict):
         
         # Perform the data acquisition here (additional data acquisition logic can be added)
         print(f"Data acquisition completed for panel: {panel_id}")
-        time.sleep(3)
+
+        waveform_data, prpd_data = process_raw_data(panel_id)
+        meta_file =os.path.join(main_path, 'DataTransfer', f'CH{panel_id}','meta.json')
+        update_meta(settings_dict,meta_file, waveform_data)
+        run_uploaddata(panel_id)
+
 
 # Example usage
 if __name__ == "__main__":
     get_main_path()
+    iteration_count = 0  # 初始化计数器
+    while True:
+        iteration_count += 1  # 每次循环增加计数
+        print(f"\nStarting DAQ iteration {iteration_count}...")
+        # Check if channelsinfo has changed
+        if run_channelsinfochanged() is True:
+            print("Channels info has changed, downloading channel info...")
+            run_downloadchannelsinfo()
+        else:
+            print("No changes in channels info.")
 
-    # Check if channelsinfo has changed
-    if run_channelsinfochanged() is True:
-        print("Channels info has changed, downloading channel info...")
-        run_downloadchannelsinfo()
-    else:
-        print("No changes in channels info.")
+        channelsinfo_dict = read_channelinfo_json()
+        upload_interval = channelsinfo_dict.get("upload-interval", 0) 
+        # print(channelsinfo_dict)
+        data_acquisition(channelsinfo_dict)
+        if upload_interval > 0:
+            print(f"Sleeping for {upload_interval} seconds before the next acquisition...")
+            time.sleep(upload_interval)
+        else:
+            print("Upload interval is set to 0, exiting loop.")
 
-    channelsinfo_dict = read_channelinfo_json()
-    # print(channelsinfo_dict)
-    data_acquisition(channelsinfo_dict)
 
     
 
