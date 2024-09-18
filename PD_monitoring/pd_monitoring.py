@@ -15,6 +15,7 @@ def get_main_path():
     """
     global main_path
     main_path = os.getcwd()
+    print("Main Path:",main_path)
 
 def run_downloadsettings(panel_id):
     # Construct the path to the panel directory
@@ -274,6 +275,7 @@ def update_meta(settings_dict,meta_file, waveform_data):
     meta_data['samples-per-waveform'] = waveform_len
     meta_data["daq-triggering-threshold"]=trig_val
     meta_data['substation-id'] = "TESTSTATION-5"
+    meta_data['panel-id'] = settings_dict.get("panel-id")
     # 将更新后的数据保存回 meta.json 文件
     with open(meta_file, 'w') as file:
         json.dump(meta_data, file, indent=4)
@@ -334,6 +336,7 @@ def data_acquisition(channelinfo_dict):
             current_dir = os.getcwd()
             print(f"Current working directory before running ELF: {current_dir}")           
             # Execute the ELF file
+            # subprocess.run([elf_file_path], check=True)
             subprocess.run([elf_file_path], check=True)
             print(f"Executed {elf_file_path} successfully.")
             
@@ -368,7 +371,7 @@ if __name__ == "__main__":
 
         channelsinfo_dict = read_channelinfo_json()
         upload_interval = channelsinfo_dict.get("upload-interval", 0) 
-        # print(channelsinfo_dict)
+        print(channelsinfo_dict)
         data_acquisition(channelsinfo_dict)
         if upload_interval > 0:
             print(f"Sleeping for {upload_interval} seconds before the next acquisition...")

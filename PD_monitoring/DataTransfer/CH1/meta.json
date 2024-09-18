@@ -14,7 +14,7 @@
     "frontend-watchdog-alarm": false,
     "frontend-watchdog-alarm-descd": "data error",
     "frontend-watchdog-alarm-words": 100,
-    "no-of-waveforms-collected": 2000,
+    "no-of-waveforms-collected": 1000,
     "panel-id": "TESTPANEL-1",
     "pd-alarm-ae": [
         {
