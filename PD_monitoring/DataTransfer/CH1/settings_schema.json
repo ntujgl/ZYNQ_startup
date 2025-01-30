@@ -85,7 +85,7 @@
             "type": "integer",
             "title": "Samples per Waveform",
             "default": 256,
-            "enum": [256, 512, 1024, 2048]
+            "enum": [128,256, 512, 1024]
         },
         "cluster-method": {
             "type": "string",
