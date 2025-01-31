@@ -9,12 +9,12 @@
     "bandwidth-saving": false,
     "daq-gain": 10,
     "daq-gain-level": 60,
-    "daq-triggering-threshold": 0.15,
+    "daq-triggering-threshold": 0.02,
     "daq-triggering-threshold-used": 48,
     "frontend-watchdog-alarm": false,
     "frontend-watchdog-alarm-descd": "data error",
     "frontend-watchdog-alarm-words": 100,
-    "no-of-waveforms-collected": 427,
+    "no-of-waveforms-collected": 500,
     "panel-id": "TESTPANEL-3",
     "pd-alarm-ae": [
         {

@@ -25,7 +25,8 @@ LNA_PARAMS = {
 }
 
 def send_mqtt_message(panel, extra_msg=""):
-    client = mqtt.Client()  # 创建 MQTT 客户端
+    # client = mqtt.Client()  # 创建 MQTT 客户端
+    client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
     client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)  # 设置用户名和密码
 
     try:
@@ -646,7 +647,7 @@ def data_acquisition(channelinfo_dict):
                     meta_file = os.path.join(main_path, 'DataTransfer', f'CH{panel_id}', 'meta.json')
                     update_meta(settings_dict, meta_file, waveform_data)
                     run_uploaddata(panel_id)
-
+                    send_mqtt_message(panel=panel_id, extra_msg="Data uploaded")  
                 # Step 2: Set gear values to 2
                 for i in range(1, 5):
                     settings_dict[f"gear_{i}"] = 2
