@@ -8,7 +8,7 @@ import process_rawdata
 import numpy as np
 import pandas as pd
 import paho.mqtt.client as mqtt
-
+from fir_coe import generate_fir_coeff_vector
 main_path = None
 
 # MQTT 服务器配置
@@ -19,9 +19,9 @@ MQTT_USERNAME = "user"
 MQTT_PASSWORD = "1234"
 
 LNA_PARAMS = {
-    0: {"K": 3, "C": 0.015},
-    1: {"K": 3 / 10, "C": 0.015 / 10},
-    2: {"K": 3 / 110, "C": 0.015 / 110}
+    0: {"K": 3, "C": 0},
+    1: {"K": 3 / 10, "C": 0 / 10},
+    2: {"K": 3 / 110, "C": 0 / 110}
 }
 
 def send_mqtt_message(panel, extra_msg=""):
@@ -209,11 +209,14 @@ def write_settings_ini(panel_id, settings_dict):
         'Health_check_channel_select': int(panel_id) - 1,  # Default value
         'Max_duration': settings_dict.get('max-daq-d', 100)  # Corresponds to max-daq-d
     }
-
+    
     # Define the path where the settings.ini file will be saved
     target_directory = os.path.join(main_path, 'DataTransfer', f'CH{panel_id}')
     ini_file_path = os.path.join(target_directory, 'settings.ini')
-
+    f_low = settings_dict.get("LPF", 10.0)
+    f_high = settings_dict.get("HPF", 50.0)
+    coetxt_file_path = os.path.join(target_directory, 'fir_coefficients_vector.txt')
+    generate_fir_coeff_vector(f_low,f_high,coetxt_file_path,128)
     # Write to the settings.ini file
     with open(ini_file_path, 'w') as configfile:
         config.write(configfile)
@@ -269,7 +272,10 @@ def write_multi_trigger_settings_ini(panel_id, settings_dict, iteration):
     # Define the path where the settings.ini file will be saved
     target_directory = os.path.join(main_path, 'DataTransfer', f'CH{panel_id}')
     ini_file_path = os.path.join(target_directory, 'settings.ini')
-
+    f_low = settings_dict.get("LPF", 10.0)
+    f_high = settings_dict.get("HPF", 50.0)
+    coetxt_file_path = os.path.join(target_directory, 'fir_coefficients_vector.txt')
+    generate_fir_coeff_vector(f_low,f_high,coetxt_file_path,128)    
     # Write to the settings.ini file
     with open(ini_file_path, 'w') as configfile:
         config.write(configfile)
@@ -457,7 +463,7 @@ def update_meta(settings_dict,meta_file, waveform_data):
     meta_data['no-of-waveforms-collected'] = num_waveforms
     meta_data['samples-per-waveform'] = waveform_len
     meta_data["daq-triggering-threshold"]=trig_val
-    meta_data['substation-id'] = "TESTSTATION-5"
+    meta_data['substation-id'] = settings_dict.get("substation-id")
     meta_data['panel-id'] = settings_dict.get("panel-id")
     # 将更新后的数据保存回 meta.json 文件
     with open(meta_file, 'w') as file:
@@ -479,7 +485,9 @@ def multi_trigger_mode(panel_id, settings_dict):
 
         # Copy settings.ini to the Program directory
         source_ini_file = os.path.join(main_path, 'DataTransfer', f'CH{panel_id}', 'settings.ini')
+        source_fircoe_file=os.path.join(main_path, 'DataTransfer', f'CH{panel_id}', 'fir_coefficients_vector.txt')
         destination_dir = os.path.join(main_path, 'Program')
+        shutil.copy(source_fircoe_file, destination_dir)
         shutil.copy(source_ini_file, destination_dir)
         print(f"Settings.ini copied to {destination_dir} (Multi Trigger Mode, Iteration {i}).")
 
@@ -556,8 +564,10 @@ def normal_mode(panel_id, settings_dict):
     print(f"Settings.ini file written for panel {panel_id} (Normal Mode).")
 
     source_ini_file = os.path.join(main_path, 'DataTransfer', f'CH{panel_id}', 'settings.ini')
+    source_fircoe_file=os.path.join(main_path, 'DataTransfer', f'CH{panel_id}', 'fir_coefficients_vector.txt')
     destination_dir = os.path.join(main_path, 'Program')       
     shutil.copy(source_ini_file, destination_dir)
+    shutil.copy(source_fircoe_file, destination_dir)
     print(f"Settings.ini copied to {destination_dir} (Normal Mode).")
 
     target_directory = os.path.join(main_path, 'DataTransfer', f'CH{panel_id}')

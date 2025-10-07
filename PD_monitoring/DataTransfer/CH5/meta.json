@@ -36,7 +36,7 @@
     "samples-per-waveform": 256,
     "sampling-rate-mhz": 100,
     "sensor-id": "TESTSENSOR-1",
-    "substation-id": "TESTSTATION-5",
+    "substation-id": "TESTSTATION-2",
     "switchgear-id": "TESTBOARD-1",
     "sync-hz": 50.05,
     "waveform": "waveform.csv",

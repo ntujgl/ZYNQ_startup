@@ -14,6 +14,11 @@ expect "Password:"
 send "$root_password\r"
 
 expect "#"
+
+send "echo 0 > /sys/class/fpga_manager/fpga0/flags\r"
+send "cd /lib/firmware\r"
+send "echo design_1_wrapper.bit.bin > /sys/class/fpga_manager/fpga0/firmware\r"
+send "cd /home/xilinx/PD_monitoring\r"
 send "python3 /home/xilinx/PD_monitoring/pd_monitoring.py\r"
 
 # After switching to root, keep the shell interactive for user input
